@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relevance Checker</title>
+    <style>
+    body {
+        font-family: 'Arial', sans-serif;
+        text-align: center;
+        margin: 50px;
+        background-color: #f2f2f2; /* Set the background color for the entire page */
+    }
+
+    h1 {
+        color: #333;
+    }
+
+    form {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 40px;
+        background: #1D6978; /* Set the background color for the form */
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.9);
+    }
+
+    label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: bold;
+        color: #fff;
+       
+    }
+
+    textarea {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 20px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+
+    }
+
+    input[type="submit"] {
+        padding: 10px 10px;
+        background: #4caf50;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    h2 {
+        margin-top: 20px;
+        font-weight: bold;
+        color: #333;
+    }
+
+    p {
+        margin: 10px 0;
+        color: #333;
+    }
+
+    #result-container {
+        background-color: #f8f8f8; /* Set the background color for the result container */
+        border-radius: 8px;
+        padding: 20px;
+        margin-top: 20px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+</style>
+
+</head>
+<body>
+    <h1>Relevance Checker</h1>
+    <form id="relevanceForm">
+    <label for="tweet">Tweet:</label>
+    <textarea id="tweet" name="tweet" rows="4" cols="50" required></textarea><br>
+
+    <label for="reply">Reply:</label>
+    <textarea id="reply" name="reply" rows="4" cols="50" required></textarea><br>
+
+    <input type="button" value="Check Relevance" onclick="checkRelevance()">
+</form>
+
+<div id="resultContainer"></div>
+<script>
+function checkRelevance() {
+    var tweet = document.getElementById('tweet').value;
+    var reply = document.getElementById('reply').value;
+
+    // Make an AJAX request to check relevance
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", "/check_relevance", true);
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4) {
+            if (xhr.status === 200) {
+                // Parse JSON response
+                var response = JSON.parse(xhr.responseText);
+
+                // Update the resultContainer with formatted content
+                var resultContainer = document.getElementById('resultContainer');
+                resultContainer.innerHTML = formatResult(response);
+            } else {
+                console.error("Error: " + xhr.status);
+            }
+        }
+    };
+    
+    var params = "tweet=" + encodeURIComponent(tweet) + "&reply=" + encodeURIComponent(reply);
+    xhr.send(params);
+}
+
+function formatResult(response) {
+    var formattedResult = '<div style="background-color: #f8f8f8; border-radius: 8px; padding: 20px; margin-top: 20px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">';
+    formattedResult += '<h2 style="color: #333;">Result:</h2>';
+    formattedResult += '<p style="margin: 10px 0;"><strong style="color: #555;">Tweet:</strong> ' + response.tweet + '</p>';
+    formattedResult += '<p style="margin: 10px 0;"><strong style="color: #555;">Reply:</strong> ' + response.reply + '</p>';
+    formattedResult += '<p style="margin: 10px 0;"><strong style="color: #555;">Relevant:</strong> ' + (response.relevant ? 'Yes' : 'No') + '</p>';
+    formattedResult += '</div>';
+    return formattedResult;
+}
+</script>
+
+</script>
+
+
+
+</body>
+</html>
